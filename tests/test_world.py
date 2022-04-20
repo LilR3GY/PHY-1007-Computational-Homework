@@ -1,4 +1,4 @@
-import env_tests  # Modifies path, DO NOT REMOVE
+from tests import env_tests  # Modifies path, DO NOT REMOVE
 import unittest
 
 from src.circuit import Circuit
