@@ -136,7 +136,6 @@ class World:
             self._potential = LaplaceEquationSolver().solve(self._wires_voltage)
             self._electric_field = - self._potential.gradient()
             #self._magnetic_field = BiotSavartEquationSolver.solve(self._wires_current)
-            #self._energy_flux = ScalarField().gradient(self._magnetic_field)
             #self._energy_flux = (1/mu_0) (self._electric_field.cross(self._magnetic_field))
 
     def show_wires_voltage(self):
