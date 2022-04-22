@@ -29,17 +29,33 @@ class BiotSavartEquationSolver:
             B_z(x, y) are the 3 components of the magnetic vector at a given point (x, y) in space. Note that
             B_x = B_y = 0 is always True in our 2D world.
         """
-        m, n, _ = electric_current.shape
-        magnetic_field = np.zeros(electric_current)
-        I_x, I_y = np.indices((m,n))
+        import time
+        import warnings
 
-        for i in range(m):
-            for j in range(n):
-                r = np.stack([-I_x+i, -I_y+j, np.zeros((m,n))], axis=2)
+        #On créer une matrice d'indice n et m
+        n, m, _ = electric_current.shape
+        magnetic_field = np.zeros(electric_current.shape)
+
+        r_i, r_j = np.indices((n, m))
+        #On itère sur notre matrice créer à la ligne 39, en calculant nos distance à l'aide d'une matrice d'indice.
+        for i in range(n):
+            for j in range(m):
+
+                #En utilisant stack, on joint nos deux matrices.
+                #Par la suite, on calcul les valeurs requises pour faire Biot-Savart
+                r = np.stack([i-r_i, j-r_j, np.zeros((n, m))], axis=2)
                 r_norm = np.sqrt(np.sum(np.square(r), axis=2))
-                r_direction = r/r_norm[:,:, None]
-                B = ((mu_0)/(4*pi)) * np.cross(electric_current, r_direction, axis=2)/np.square(r_norm)[:,:,None]
-                B[np.isnan(B)] = 0
-                magnetic_field[i, j] = np.sum(B)
+                r_hat = r/r_norm[:, :, None]
+                
+                #Valeur de notre champs avant l'ajout des constantes
+                b = np.cross(electric_current, r_hat, axis=2)/np.square(r_norm)[:, :, None]
+
+
+                #À cause des discontinuités causé par une norme = 0, il faut «manuellement» mettre ces itérations = 0 pour que le code fonctionne.
+                #Cependant, le code renvoi quand même une erreur, mais marche quand même.
+                b[np.isnan(b)] = 0
+
+                #Valeur de notre matrice de champs B en tous points dans le monde
+                magnetic_field[i, j] = (mu_0/(4*pi))*np.sum(b, axis=(0, 1))
 
         return VectorField(magnetic_field)

@@ -45,15 +45,14 @@ class LaplaceEquationSolver:
             is not a point belonging to an electric wire.
         """
 
-        # Le code est ici 
-        potential=np.zeros_like(constant_voltage)
-        
-        for _ in range (self.nb_iterations):
-            new_potential = np.copy(potential)
+        # Le code est ici
+        potential=np.zeros_like(constant_voltage)   # On copie la matrice «constant_voltage qui» est donné en argument de la fonction
+                                                    # «solve» en instanciant chaque valeur de la matrice à 0.
+        for _ in range (self.nb_iterations):        # On commence une boucle avec un itérable qu'on n'a pas besoin de nommer, car on ne le réutilisera pas.
     
-            potential[1:-1,1:-1] = 1/4*(new_potential[:-2,1:-1] + potential[2 :, 1 : -1] + new_potential[1 : -1, : -2] + potential[ 1: -1, 2:])
-            
-            potential = np.where(constant_voltage != 0, constant_voltage, potential)
-            
-            M = potential
-        return ScalarField(M)
+            potential[1:-1,1:-1] = 1/4*(potential[:-2,1:-1] + potential[2 :, 1 : -1] + potential[1 : -1, : -2] + potential[ 1: -1, 2:]) # On insère la formule donné par le professeur.
+
+            potential = np.where(constant_voltage != 0, constant_voltage, potential) #Lorsque «constant_voltage» n'est pas = 0 on remplace toutes ses valeurs par la nouvelle valeur «potential» calculé précédemment.
+
+        return ScalarField(potential) #On retourne le potentiel sous forme de champ scalaire comme demandé.
+
